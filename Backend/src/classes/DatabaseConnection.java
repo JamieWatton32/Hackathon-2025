@@ -9,7 +9,7 @@ public class DatabaseConnection {
     private static Connection connection;
 
     public static Connection getConnection(){
-        if(connection != null){
+        if(connection == null){
             try{
                 connection = DriverManager.getConnection(PATH);
             } catch (SQLException e) {
@@ -19,6 +19,7 @@ public class DatabaseConnection {
         }
         return connection;
     }
+
     public static void closeConnection(){
         try{
             if(connection != null){
