@@ -5,7 +5,7 @@ import java.sql.SQLException;
 public class ClassroomsDAO {
     // Inserts new row into Classrooms table
     public static void insertClassrooms(int id, String complete){
-        String sql = "INSERT INTO classrooms(id, name) VALUES(?, ?)";
+        String sql = "INSERT INTO classrooms(id, complete) VALUES(?, ?)";
 
         try(var conn = DatabaseConnection.getConnection()){
             var pstmt = conn.prepareStatement(sql);
@@ -19,18 +19,23 @@ public class ClassroomsDAO {
         }
     }
     public static void getClassrooms() {
-        String sql = "SELECT * FROM classrooms";
+        String sql = "SELECT classrooms.* FROM classrooms";
 
-        try (var conn = DatabaseConnection.getConnection();
-             var stmt = conn.createStatement();
-             var rs = stmt.executeQuery(sql)) {
+        try (var conn = DatabaseConnection.getConnection()) {
+            if (conn == null) {
+                System.err.println("Database connection is null or closed.");
+                return;
+            }
+
+            var stmt = conn.createStatement();
+            var rs = stmt.executeQuery(sql);
             while (rs.next()) {
                 System.out.println(
                         "ID: " + rs.getInt("id") +
-                                ", Name: " + rs.getString("complete"));
+                                "Completed: " + rs.getString("complete"));
             }
         } catch (SQLException e) {
-            System.err.println("Error retrieving warehouses: " + e.getMessage());
+            System.err.println("Error retrieving classrooms: " + e.getMessage());
         }
     }
 

@@ -1,6 +1,7 @@
-package net.sqlite;
+pckage net.sqlite;
 
 import classes.ClassroomsDAO;
+import classes.DatabaseConnection;
 import classes.DatabaseManager;
 
 import java.io.File;
@@ -21,6 +22,8 @@ public class Main {
                 DatabaseManager.setupDatabase();
                 System.out.println("Database setup complete.");
                 ClassroomsDAO.insertClassrooms(1,"Yes");
+                ClassroomsDAO.getClassrooms();
+
             }
         } catch (SQLException e) {
             System.err.println("Connection failed: " + e.getMessage());

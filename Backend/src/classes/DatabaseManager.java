@@ -21,22 +21,21 @@ public class DatabaseManager {
         }
     }
     private static void createTables(){
-        // SQL statement for creating a new table
         var sql = "CREATE TABLE IF NOT EXISTS classrooms ("
                 + "	id INTEGER PRIMARY KEY,"
-                + "	complete text NOT NULL,"
+                + " complete TEXT"
                 + ");";
 
-
-        try(var conn = DatabaseConnection.getConnection()) {
-            var stmt = conn.createStatement();
+        try (var conn = DriverManager.getConnection(PATH);
+             var stmt = conn.createStatement()) {
+            // create a new table
             stmt.execute(sql);
-            System.out.println("Tables created or already exist.");
-        }catch(SQLException e){
-            System.err.println("Error executing statement.");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
-
     }
+
+
 
     public static void setupDatabase() {
         createDB();

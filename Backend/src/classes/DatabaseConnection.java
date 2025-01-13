@@ -9,13 +9,14 @@ public class DatabaseConnection {
     private static Connection connection;
 
     public static Connection getConnection(){
-        if(connection == null){
-            try{
+        try {
+            // Check if the connection is null or closed
+            if (connection == null || connection.isClosed()) {
                 connection = DriverManager.getConnection(PATH);
-            } catch (SQLException e) {
-                System.err.println("Error establishing connection: " + e.getMessage());
             }
-
+        } catch (SQLException e) {
+            System.err.println("Error establishing connection: " + e.getMessage());
+            connection = null; // Reset connection if something went wrong
         }
         return connection;
     }
