@@ -1,7 +1,9 @@
 package BackEnd;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
+
 /**
  * Api class for the Database
  * <p>
@@ -9,257 +11,89 @@ import java.util.ArrayList;
  * </p>
  * Usage Example:
  * <pre>
- *    ArrayList<String> classrooms = DataApi.getClassrooms();
+ *    ArrayList<String> classrooms = DataApi.getRooms();
  *    classrooms.forEach(System.out::println);
  * </pre>
  */
 public class DataApi {
+    private static final Set<String> VALID_TABLE_NAMES = Set.of("Classrooms", "Culinary", "Shops", "Maintenance","Offices", "Laboratory");
 
     /**
-     * Retrieves a list of classroom rooms from the database.
+     * Retrieves a list of rooms from table corresponding to {@code tableName}
      * <p>
      * Connects to the database using {@code DatabaseConnector.getConnection()},
-     * executes a query to fetch all rows from the "Classrooms" table, and extracts the values
-     * from the "room" column. The result is returned as an {@code ArrayList<String>}.
-     * </p>
-     *
-     * @return an {@code ArrayList<String>}  containing the names of all classrooms
-     *         retrieved from the database. If no classrooms are found or an error occurs,
-     *         an empty list is returned.
-     * =
-     */
-    public static ArrayList<String> getClassrooms() {
-        String sql = "SELECT * FROM Classrooms";
-        ArrayList<String> rooms = new ArrayList<>();
-        try (var conn = DatabaseConnector.getConnection()) {
-            var stmt = conn.createStatement();
-            var rs = stmt.executeQuery(sql);
-            int columnIndex = 0;
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            String columnName = "room";
-
-            for (int col = 1; col <= columnCount; col++) {
-                if (metaData.getColumnLabel(col).equalsIgnoreCase(columnName)) {
-                     // Return the column index (1-based)
-                    columnIndex = col;
-
-                }
-            }
-            while (rs.next()) {
-                rooms.add(rs.getString(columnIndex)); // Add the row to the table
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Error retrieving classrooms: " + e.getMessage());
-        }
-        DatabaseConnector.closeConnection();
-        return rooms;
-    }
-    /**
-     * Retrieves a list of Culinary rooms from the database.
-     * <p>
-     * Connects to the database using {@code DatabaseConnector.getConnection()},
-     * executes a query to fetch all rows from the "Culinary" table, and extracts the values
+     * executes a query to fetch all rows from the {@code tableName} table, and extracts the values
      * from the "room" column. The result is returned as an {@code ArrayList<String>}.
      * </p>
      *
      * @return an {@code ArrayList<String>}  containing the names of all culinary  rooms
      *         retrieved from the database. If no rooms are found or an error occurs,
-     *         an empty list is returned.
-     * =
+     *         an empty list is returned. If table not in approved list of
+     *         tables an empty list is returned.
+     *
      */
-    public static ArrayList<String> getCulinary() {
-        String sql = "SELECT * FROM Culinary";
+    public static ArrayList<String> getRooms(String tableName) {
+        if(!VALID_TABLE_NAMES.contains(tableName)){
+            return new ArrayList<>();
+        }
+        String sql = "SELECT room FROM " + tableName;
+
         ArrayList<String> rooms = new ArrayList<>();
         try (var conn = DatabaseConnector.getConnection()) {
             var stmt = conn.createStatement();
             var rs = stmt.executeQuery(sql);
-            int columnIndex = 0;
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            String columnName = "room";
-
-            for (int col = 1; col <= columnCount; col++) {
-                if (metaData.getColumnLabel(col).equalsIgnoreCase(columnName)) {
-                    // Return the column index (1-based)
-                    columnIndex = col;
-
-                }
-            }
-            while (rs.next()) {
-                rooms.add(rs.getString(columnIndex)); // Add the row to the table
+            String columnLabel = "room";
+            while(rs.next()){
+                rooms.add(rs.getString(columnLabel));
             }
 
         } catch (SQLException e) {
-            System.err.println("Error retrieving Culinary rooms: " + e.getMessage());
+            System.err.println("Error retrieving rooms: " + e.getMessage());
         }
-        DatabaseConnector.closeConnection();
+
         return rooms;
     }
+
     /**
-     * Retrieves a list of Lab rooms from the database.
+     * Retrieves a HashMap of room:date pairs from table corresponding to {@code tableName}
      * <p>
      * Connects to the database using {@code DatabaseConnector.getConnection()},
-     * executes a query to fetch all rows from the "Laboratory" table, and extracts the values
-     * from the "room" column. The result is returned as an {@code ArrayList<String>}.
+     * executes a query to fetch all rows from the {@code tableName} table, and extracts the values
+     * from the "room" and "date" columns.
      * </p>
      *
-     * @return an {@code ArrayList<String>}  containing the names of all labs  rooms
+     * @return an {@code HashMap<String,String>} containing the names of all room with their entered date
      *         retrieved from the database. If no rooms are found or an error occurs,
-     *         an empty list is returned.
-     * =
+     *         an empty map is returned. If table not in approved list of
+     *         tables an empty map is returned.
+     *
      */
-    public static ArrayList<String> getLaboratory() {
-        String sql = "SELECT * FROM Laboratory";
-        ArrayList<String> rooms = new ArrayList<>();
+    public static HashMap<String,String> getRoomDates(String tableName) {
+        if(!VALID_TABLE_NAMES.contains(tableName)){
+            return new HashMap<>();
+        }
+        String sql = "SELECT room, date FROM " + tableName;
+
+        HashMap<String,String> roomDates = new HashMap<>();
         try (var conn = DatabaseConnector.getConnection()) {
             var stmt = conn.createStatement();
             var rs = stmt.executeQuery(sql);
-            int columnIndex = 0;
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            String columnName = "room";
+            String columnLabel1 = "room";
+            String columnLabel2 = "date";
 
-            for (int col = 1; col <= columnCount; col++) {
-                if (metaData.getColumnLabel(col).equalsIgnoreCase(columnName)) {
-                    // Return the column index (1-based)
-                    columnIndex = col;
-
-                }
-            }
-            while (rs.next()) {
-                rooms.add(rs.getString(columnIndex)); // Add the row to the table
+            while(rs.next()){
+                roomDates.put(rs.getString(columnLabel1), rs.getString(columnLabel2));
             }
 
         } catch (SQLException e) {
-            System.err.println("Error retrieving Laboratories: " + e.getMessage());
+            System.err.println("Error retrieving data: " + e.getMessage());
         }
-        DatabaseConnector.closeConnection();
-        return rooms;
+
+        return roomDates;
     }
-    /**
-     * Retrieves a list of Maintenance rooms from the database.
-     * <p>
-     * Connects to the database using {@code DatabaseConnector.getConnection()},
-     * executes a query to fetch all rows from the "Maintenance" table, and extracts the values
-     * from the "room" column. The result is returned as an {@code ArrayList<String>}.
-     * </p>
-     *
-     * @return an {@code ArrayList<String>}  containing the names of all maintenance rooms
-     *         retrieved from the database. If no rooms are found or an error occurs,
-     *         an empty list is returned.
-     * =
-     */
-    public static ArrayList<String> getMaintenance() {
-        String sql = "SELECT * FROM Maintenance";
-        ArrayList<String> rooms = new ArrayList<>();
-        try (var conn = DatabaseConnector.getConnection()) {
-            var stmt = conn.createStatement();
-            var rs = stmt.executeQuery(sql);
-            int columnIndex = 0;
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            String columnName = "room";
 
-            for (int col = 1; col <= columnCount; col++) {
-                if (metaData.getColumnLabel(col).equalsIgnoreCase(columnName)) {
-                    // Return the column index (1-based)
-                    columnIndex = col;
 
-                }
-            }
-            while (rs.next()) {
-                rooms.add(rs.getString(columnIndex)); // Add the row to the table
-            }
 
-        } catch (SQLException e) {
-            System.err.println("Error retrieving maintenance rooms: " + e.getMessage());
-        }
-        DatabaseConnector.closeConnection();
-        return rooms;
-    }
-    /**
-     * Retrieves a list of shops from the database.
-     * <p>
-     * Connects to the database using {@code DatabaseConnector.getConnection()},
-     * executes a query to fetch all rows from the "Shops" table, and extracts the values
-     * from the "room" column. The result is returned as an {@code ArrayList<String>}.
-     * </p>
-     *
-     * @return an {@code ArrayList<String>}  containing the names of all shops
-     *         retrieved from the database. If no rooms are found or an error occurs,
-     *         an empty list is returned.
-     * =
-     */
-    public static ArrayList<String> getShops() {
-        String sql = "SELECT * FROM Shops";
-        ArrayList<String> rooms = new ArrayList<>();
-        try (var conn = DatabaseConnector.getConnection()) {
-            var stmt = conn.createStatement();
-            var rs = stmt.executeQuery(sql);
-            int columnIndex = 0;
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            String columnName = "room";
 
-            for (int col = 1; col <= columnCount; col++) {
-                if (metaData.getColumnLabel(col).equalsIgnoreCase(columnName)) {
-                    // Return the column index (1-based)
-                    columnIndex = col;
-
-                }
-            }
-            while (rs.next()) {
-                rooms.add(rs.getString(columnIndex)); // Add the row to the table
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Error retrieving shops: " + e.getMessage());
-        }
-        DatabaseConnector.closeConnection();
-        return rooms;
-    }
-    /**
-     * Retrieves a list of Officesfrom the database.
-     * <p>
-     * Connects to the database using {@code DatabaseConnector.getConnection()},
-     * executes a query to fetch all rows from the "Offices" table, and extracts the values
-     * from the "room" column. The result is returned as an {@code ArrayList<String>}.
-     * </p>
-     *
-     * @return an {@code ArrayList<String>}  containing the names of all offices
-     *         retrieved from the database. If no rooms are found or an error occurs,
-     *         an empty list is returned.
-     * =
-     */
-    public static ArrayList<String> getOffices() {
-        String sql = "SELECT * FROM Offices";
-        ArrayList<String> rooms = new ArrayList<>();
-        try (var conn = DatabaseConnector.getConnection()) {
-            var stmt = conn.createStatement();
-            var rs = stmt.executeQuery(sql);
-            int columnIndex = 0;
-            ResultSetMetaData metaData = rs.getMetaData();
-            int columnCount = metaData.getColumnCount();
-            String columnName = "room";
-
-            for (int col = 1; col <= columnCount; col++) {
-                if (metaData.getColumnLabel(col).equalsIgnoreCase(columnName)) {
-                    // Return the column index (1-based)
-                    columnIndex = col;
-
-                }
-            }
-            while (rs.next()) {
-                rooms.add(rs.getString(columnIndex)); // Add the row to the table
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Error retrieving offices: " + e.getMessage());
-        }
-        DatabaseConnector.closeConnection();
-        return rooms;
-    }
 
 }
