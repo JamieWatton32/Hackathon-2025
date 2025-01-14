@@ -22,8 +22,13 @@ public class ProgramWindow extends JFrame {
         // CardLayout container (in the center)
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
-        cardPanel.add(new OutstandingPage().getPanel(), "Outstanding");
-        cardPanel.add(new ReportsPage().getPanel(), "Reports");
+
+        JScrollPane outstandingScrollPane = new JScrollPane(new OutstandingPage().getPanel());
+        cardPanel.add(outstandingScrollPane, "Outstanding");
+
+        JScrollPane reportsScrollPane = new JScrollPane(new ReportsPage().getPanel());
+        cardPanel.add(reportsScrollPane, "Reports");
+
         add(cardPanel, BorderLayout.CENTER);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
