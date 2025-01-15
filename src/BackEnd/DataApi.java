@@ -41,17 +41,6 @@ public class DataApi {
         try (var conn = DatabaseConnector.getConnection()) {
             var stmt = conn.createStatement();
             var rs = stmt.executeQuery(sql);
-            ResultSetMetaData meta = rs.getMetaData();
-            ArrayList<String> columnList = new ArrayList<>();
-            int colNum = 1;
-            while(rs.next()){
-                columnList.add(meta.getColumnName(colNum));
-                colNum++;
-
-            }
-            for(var test: columnList){
-                System.out.println(test);
-            }
             while(rs.next()){
                 rooms.add(rs.getString("Location_of_inspection"));
             }
@@ -104,7 +93,7 @@ public class DataApi {
      * <p>
      * Connects to the database using {@code DatabaseConnector.getConnection()},
      * executes a query to fetch all rows from the {@code tableName} table, and maps the questions
-     * too their respective response
+     * to their respective response
      * </p>
      * Usage example:
      * <PRE>
@@ -117,6 +106,7 @@ public class DataApi {
      * </PRE>
      * @return an {@code ArrayList<LinkedHashMap<String,String>>} all column the response
      * and their corresponding column question.
+     * returns empty list if invalid table name or {@code SQLException} occurs.
      */
     public static ArrayList<LinkedHashMap<String,String>> getAllResponses(String tableName) {
         if(!VALID_TABLE_NAMES.contains(tableName)){
@@ -152,7 +142,7 @@ public class DataApi {
      * <p>
      * Connects to the database using {@code DatabaseConnector.getConnection()},
      * executes a query to fetch all rows from the {@code tableName} table, and maps the questions
-     * too their respective response for all rows with a room of {@code roomNumber}
+     * to their respective response for all rows with a room of {@code roomNumber}
      * </p>
      * Usage example:
      * <PRE>
@@ -165,7 +155,7 @@ public class DataApi {
      * </PRE>
      * @return an {@code ArrayList<LinkedHashMap<String,String>>} all column the response
      * and their corresponding column question for any row with a room number of {@code roomNumber}
-     *
+     * returns empty list if invalid table name or {@code SQLException} occurs.
      */
     public static ArrayList<LinkedHashMap<String,String>> getRoomResponse(String tableName, String roomNumber) {
         if(!VALID_TABLE_NAMES.contains(tableName)){
@@ -201,7 +191,7 @@ public class DataApi {
      * <p>
      * Connects to the database using {@code DatabaseConnector.getConnection()},
      * executes a query to fetch all rows from the {@code tableName} table, and maps the questions
-     * too their respective response for all rows with a date of {@code date}. Date must match exactly for time being
+     * to their respective response for all rows with a date of {@code date}. Date must match exactly for time being
      * </p>
      * Usage example:
      * <PRE>
@@ -214,7 +204,7 @@ public class DataApi {
      * </PRE>
      * @return an {@code ArrayList<LinkedHashMap<String,String>>} all column the response
      * and their corresponding column question for any row with a room number of {@code date}
-     *
+     * returns empty list if invalid table name or {@code SQLException} occurs
      */
     public static ArrayList<LinkedHashMap<String,String>> getDateResponse(String tableName, String date) {
         if(!VALID_TABLE_NAMES.contains(tableName)){
@@ -245,7 +235,6 @@ public class DataApi {
 
         return responses;
     }
-
 
 
 
