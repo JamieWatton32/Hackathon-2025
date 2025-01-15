@@ -39,6 +39,7 @@ public class OutstandingPage {
         }
 
         System.out.println(DataApi.getRoomDates("Classrooms"));
+        System.out.println(DataApi.getRoomDates("Shops"));
     }
 
     public void findOutstanding(String[][] roomList) {
@@ -127,6 +128,9 @@ public class OutstandingPage {
                     (reportDate[0] == currentDate.getMonthValue()) && // & months match
                     (reportDate[1] == currentDate.getYear())) { // & years match
                 flag = true;
+
+                System.out.println("Match Found");
+                System.out.println(roomNumber + reportRoomNumber);
                 break;
             }
         }
@@ -150,7 +154,8 @@ public class OutstandingPage {
                     (reportQuarter == currentQuarter) && // & quarters match
                     (reportDate[1] == currentDate.getYear())) { // & years match
                 flag = true;
-                System.out.println("Match Found");
+//                System.out.println("Match Found");
+//                System.out.println(roomNumber + reportRoomNumber);
                 break;
             }
 //            System.out.println(reportQuarter);
