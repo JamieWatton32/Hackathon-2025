@@ -34,9 +34,11 @@ for index, csv_path in enumerate(csvs):
         if not original_columns:
             raise ValueError(f"No columns found in CSV file: {csv_path}")
         sanitized_columns = [sanitize_column_name(col) for col in original_columns]
-        
+        del sanitized_columns[0]
         # Construct CREATE TABLE statement dynamically
-        column_definitions = ', '.join([f"{col} TEXT" for col in sanitized_columns])
+        column_definitions = "ID INTEGER PRIMARY KEY, " + ', '.join([f"{col} TEXT" for col in sanitized_columns])
+         
+
         table_name = tables[index]
         create_table_sql = f"CREATE TABLE IF NOT EXISTS {table_name} ({column_definitions});"
         cur.execute(create_table_sql)
@@ -54,12 +56,23 @@ for index, csv_path in enumerate(csvs):
         columns_sql = ', '.join(sanitized_columns)
         placeholders = ', '.join(['?' for _ in sanitized_columns])
         
-        to_db = []
+        to_db_temp = []
         for row in dr:
             # Map original values to sanitized columns
             values = [row[col] for col in original_columns]
-            to_db.append(values)
+            to_db_temp.append(values)
+        
+        to_db = []
+        for col in to_db_temp:
+            temp =[]
+            for str in col:
+                cleaned_str = re.sub(r'[\[\]"]', "", str)
+                temp.append(cleaned_str)
+            to_db.append(tuple(temp))
+               
+        
 
+        
         # Insert data into the correct table
         try:
             cur.executemany(
