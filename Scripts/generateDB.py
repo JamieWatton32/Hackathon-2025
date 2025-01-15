@@ -3,6 +3,11 @@ import re
 import sqlite3
 import os
 
+# This script is horrible and is more than likely noT extensible whatsoever. 
+# Only meant to be ran once to create the DB schema 
+
+# CHANGE THINGS WITH CAUTION
+
 # Define database file path
 db_path = "sqlite/database.db"
 # Connect to the database
@@ -17,11 +22,14 @@ csvs = [
 ]
 # Check if database folder exists, create if not
 os.makedirs(os.path.dirname(db_path), exist_ok=True)
- #Function to sanitize column names
-def sanitize_column_name(column_name):
-    return re.sub(r'\W+', '_', column_name.strip())  # Replace non-word characters with underscores
 
-# Create tables dynamically
+
+# Replace whitespace with _ and removes ? from questions to brute force column headers
+def sanitize_column_name(column_name):
+    return re.sub(r'\W+', '_', column_name.strip())
+
+# This loop handles table creation. Much like the create loop it will (not tested dont trust me) any N number of columns
+# Okay to be ran if tables already exist. 
 for index, csv_path in enumerate(csvs):
     if not os.path.exists(csv_path):
         raise FileNotFoundError(f"CSV file not found at {csv_path}")
@@ -34,7 +42,8 @@ for index, csv_path in enumerate(csvs):
         if not original_columns:
             raise ValueError(f"No columns found in CSV file: {csv_path}")
         sanitized_columns = [sanitize_column_name(col) for col in original_columns]
-        del sanitized_columns[0]
+        del sanitized_columns[0] # delete the id column since we want it to be defined as the primary key.
+
         # Construct CREATE TABLE statement dynamically
         column_definitions = "ID INTEGER PRIMARY KEY, " + ', '.join([f"{col} TEXT" for col in sanitized_columns])
          
@@ -43,7 +52,8 @@ for index, csv_path in enumerate(csvs):
         create_table_sql = f"CREATE TABLE IF NOT EXISTS {table_name} ({column_definitions});"
         cur.execute(create_table_sql)
 
-# Read CSV files and insert data
+# This loop handles row insertion. Much like the create loop it will (not tested dont trust me) any N number of columns
+# There is no checking for repeat data so it crashes if theres a repeat key. 
 for index, csv_path in enumerate(csvs):
     with open(csv_path, 'r', encoding='utf-8-sig') as fin:
         dr = csv.DictReader(fin)
@@ -56,24 +66,13 @@ for index, csv_path in enumerate(csvs):
         columns_sql = ', '.join(sanitized_columns)
         placeholders = ', '.join(['?' for _ in sanitized_columns])
         
-        to_db_temp = []
+        to_db = []
         for row in dr:
             # Map original values to sanitized columns
-            values = [row[col] for col in original_columns]
-            to_db_temp.append(values)
-        
-        to_db = []
-        for col in to_db_temp:
-            temp =[]
-            for str in col:
-                cleaned_str = re.sub(r'[\[\]"]', "", str)
-                temp.append(cleaned_str)
-            to_db.append(tuple(temp))
-               
-        
+            values = [re.sub(r'[\[\]"]', "",row[col]) for col in original_columns]
+            to_db.append(values)
 
-        
-        # Insert data into the correct table
+        # Insert data into tables
         try:
             cur.executemany(
                 f"INSERT INTO {tables[index]} ({columns_sql}) VALUES ({placeholders});",
