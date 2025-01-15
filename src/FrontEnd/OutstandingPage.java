@@ -38,31 +38,36 @@ public class OutstandingPage {
             panel.add(Box.createVerticalStrut(10));  // Adjust the vertical gap as needed
         }
 
+        System.out.println(DataApi.getRoomDates("Classrooms"));
     }
 
     public void findOutstanding(String[][] roomList) {
         for (String[] room : roomList){
-            boolean flag = false;
 
             switch (room[1]) {
                 case "office" -> {
                     rooms = DataApi.getRoomDates("Offices");
+                    quarterlyCheck(room[0], rooms, currentDate, currentQuarter);
                 }
                 case "classroom" -> {
                     rooms = DataApi.getRoomDates("Classrooms");
-                    monthlyCheck(room[0], rooms, currentDate);
+                    quarterlyCheck(room[0], rooms, currentDate, currentQuarter);
                 }
                 case "shop" -> {
                     rooms = DataApi.getRoomDates("Shops");
+                    monthlyCheck(room[0], rooms, currentDate);
                 }
                 case "laboratory" -> {
                     rooms = DataApi.getRoomDates("Laboratory");
+                    monthlyCheck(room[0], rooms, currentDate);
                 }
                 case "maintenance" -> {
                     rooms = DataApi.getRoomDates("Maintenance");
+                    quarterlyCheck(room[0], rooms, currentDate, currentQuarter);
                 }
                 case "culinary" -> {
                     rooms = DataApi.getRoomDates("Culinary");
+                    monthlyCheck(room[0], rooms, currentDate);
                 }
                 case null, default -> {
                     //placeholder for error handling
@@ -118,7 +123,6 @@ public class OutstandingPage {
                     .mapToInt(Integer::parseInt)
                     .toArray();
 
-
             if ((Objects.equals(roomNumber, reportRoomNumber)) && // if room numbers match
                     (reportDate[0] == currentDate.getMonthValue()) && // & months match
                     (reportDate[1] == currentDate.getYear())) { // & years match
@@ -142,15 +146,19 @@ public class OutstandingPage {
                     .toArray();
             int reportQuarter = findQuarter(reportDate[0]);
 
-            if ((Objects.equals(roomNumber, reportRoomNumber)) && // if room numbers match
-                    (reportQuarter == currentQuarter) && // & months match
+            if ((roomNumber.equalsIgnoreCase(reportRoomNumber)) && // if room numbers match
+                    (reportQuarter == currentQuarter) && // & quarters match
                     (reportDate[1] == currentDate.getYear())) { // & years match
                 flag = true;
+                System.out.println("Match Found");
                 break;
             }
+//            System.out.println(reportQuarter);
+//            System.out.println(currentQuarter);
+//            System.out.println(roomNumber);
+//            System.out.println(reportRoomNumber);
+//            System.out.println(flag);
         }
-
-
 
         if (flag == false) {
             outstandingRooms.add(roomNumber);
