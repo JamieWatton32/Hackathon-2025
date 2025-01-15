@@ -233,7 +233,7 @@ public class DataApi {
 
                 for (int colNum = 1; colNum <= columnCount; colNum++) {
                     String columnName = meta.getColumnName(colNum).replaceAll("_", " ");
-                    String columnValue = rs.getString(colNum).replaceAll("[\\[\\]\"]", "");
+                    String columnValue = rs.getString(colNum);
                     row.put(columnName, columnValue);
                 }
 
