@@ -21,12 +21,14 @@ public class Report {
 
         // Left label (room number)
         JLabel roomNumberLabel = new JLabel(roomNumber);
+        roomNumberLabel.setFont(new Font(roomNumberLabel.getFont().getName(), Font.BOLD, 16));
         roomNumberLabel.setForeground(Color.BLACK);
         roomNumberLabel.setBorder(BorderFactory.createEmptyBorder(2, 40, 3, 0));
         roomNumberLabel.setHorizontalAlignment(SwingConstants.LEFT);
 
         // Right label (status)
         JLabel statusLabel = new JLabel(status);
+        statusLabel.setFont(new Font(statusLabel.getFont().getName(), Font.BOLD, 16));
         statusLabel.setForeground(Color.BLACK);
         statusLabel.setBorder(BorderFactory.createEmptyBorder(2, 0, 3, 40));
         statusLabel.setHorizontalAlignment(SwingConstants.RIGHT);
