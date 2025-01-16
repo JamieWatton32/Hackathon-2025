@@ -14,7 +14,7 @@ public class Report {
     public JPanel createOutstanding() {
         JPanel bar = new JPanel();
         bar.setLayout(new BorderLayout());
-        bar.setBackground(Color.WHITE); // Bar color
+        bar.setBackground(Color.decode("#EDF5FA")); // Bar color
 
         // Set preferred size for the bar
         bar.setMaximumSize(new Dimension(800, 40)); // Restrict the height
