@@ -8,7 +8,7 @@ public class ProgramWindow extends JFrame {
     private JPanel cardPanel;
 
     public ProgramWindow() {
-        setTitle("Safe 6S");
+        setTitle("Safe 5S + S"); 
         setSize(800, 600);
         setLocationRelativeTo(null);
         setResizable(false);
