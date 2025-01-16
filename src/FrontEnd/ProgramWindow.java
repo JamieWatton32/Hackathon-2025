@@ -8,7 +8,7 @@ public class ProgramWindow extends JFrame {
     private JPanel cardPanel;
 
     public ProgramWindow() {
-        setTitle("Safe 6S");
+        setTitle("Safe 5S + S"); 
         setSize(800, 600);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -24,9 +24,11 @@ public class ProgramWindow extends JFrame {
         cardPanel = new JPanel(cardLayout);
 
         JScrollPane outstandingScrollPane = new JScrollPane(new OutstandingPage().getPanel());
+        outstandingScrollPane.getVerticalScrollBar().setUnitIncrement(20);  //sets reasonable scroll speed
         cardPanel.add(outstandingScrollPane, "Outstanding");
 
         JScrollPane reportsScrollPane = new JScrollPane(new ReportsPage().getPanel());
+        reportsScrollPane.getVerticalScrollBar().setUnitIncrement(20); //sets reasonable scroll speed
         cardPanel.add(reportsScrollPane, "Reports");
 
         add(cardPanel, BorderLayout.CENTER);
