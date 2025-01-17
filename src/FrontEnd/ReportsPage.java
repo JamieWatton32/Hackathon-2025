@@ -11,6 +11,7 @@ public class ReportsPage {
 
     private ArrayList<String> outstandingRooms;
     private ArrayList<String[]> roomList2 = new ArrayList<>();
+    private ArrayList<Integer> progressList = new ArrayList<>();
 
     public ReportsPage() {
         // Find current academic year
@@ -69,12 +70,19 @@ public class ReportsPage {
             HelperFunctions.findOutstanding(roomList2, outstandingRooms, (int) month[1], (int) month[2]); // Create a list of outstanding rooms
 
             // Create a report for the month
-            JPanel monthlyReport = new MonthlyReport(month[0].toString(),roomList2,outstandingRooms).createMonthlyReport();
-            panel.add(monthlyReport);
+            MonthlyReport monthlyReport = new MonthlyReport(month[0].toString(),roomList2,outstandingRooms);
+            JPanel monthlyReportPanel = monthlyReport.createMonthlyReport();
+            panel.add(monthlyReportPanel);
+
+            progressList.add(monthlyReport.getProgress());
 
             panel.add(Box.createVerticalStrut(10));  // Adjust the vertical gap as needed
 
         }
+    }
+
+    public ArrayList<Integer> getProgressList() {
+        return progressList;
     }
 
     public JPanel getPanel() {

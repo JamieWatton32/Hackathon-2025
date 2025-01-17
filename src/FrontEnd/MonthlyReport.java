@@ -8,6 +8,7 @@ public class MonthlyReport {
     private String month;
     private int completed;
     private int total;
+    private ProgressBar progressBar;
 
     public MonthlyReport(String monthName, ArrayList<String[]> roomList, ArrayList<String> outstandingRooms) {
         this.month = monthName;
@@ -32,12 +33,16 @@ public class MonthlyReport {
         roomNumberLabel.setHorizontalAlignment(SwingConstants.LEFT);
 
         // Right label (progress)
-        ProgressBar progressBar = new ProgressBar(completed,total);
+        progressBar = new ProgressBar(completed,total);
 
         // Add labels to the bar
         bar.add(roomNumberLabel, BorderLayout.WEST);
         bar.add(progressBar.getProgressBar(), BorderLayout.EAST);
 
         return bar;
+    }
+
+    public int getProgress() {
+        return progressBar.getProgressBar().getValue();
     }
 }
