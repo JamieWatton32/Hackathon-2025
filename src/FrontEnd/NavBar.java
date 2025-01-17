@@ -38,6 +38,7 @@ public class NavBar {
     private JButton createNavButton(String text, boolean isSelected) {
         JButton button = new JButton(text);
         button.setBackground(isSelected ? Color.decode("#2A6B9B") : Color.decode("#1B5C8C"));
+        button.setFont(new Font(button.getFont().getName(), Font.BOLD, 16));
         button.setForeground(Color.WHITE);
         button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20)); // Padding around text
         button.setFocusPainted(false); // Remove focus border

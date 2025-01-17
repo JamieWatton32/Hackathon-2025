@@ -258,7 +258,20 @@ public class RoomList {
             {"S101", "maintenance"}
     };
 
+    private static String[][] roomList2 = {
+            {"A123", "office"},
+            {"B123", "classroom"},
+            {"C123", "shop"},
+            {"D123", "culinary"},
+            {"E123", "maintenance"},
+            {"F123", "laboratory"}
+    };
+
     public static String[][] getRoomList() {
         return roomList;
+    }
+
+    public static String[][] getRoomList2() {
+        return roomList2;
     }
 }

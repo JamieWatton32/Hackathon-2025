@@ -1,4 +1,5 @@
 package BackEnd;
+import java.sql.Array;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
@@ -66,21 +67,20 @@ public class DataApi {
      *         tables an empty map is returned.
      *
      */
-    public static HashMap<String,String> getRoomDates(String tableName) {
+    public static ArrayList<String[]> getRoomDates(String tableName) {
         if(!VALID_TABLE_NAMES.contains(tableName)){
-            return new HashMap<>();
+            return new ArrayList<>();
         }
         String sql = "SELECT Location_of_inspection, Date_of_inspection FROM " + tableName;
 
-        HashMap<String,String> roomDates = new HashMap<>();
+        ArrayList<String[]> roomDates = new ArrayList<>();
         try (var conn = DatabaseConnector.getConnection()) {
             var stmt = conn.createStatement();
             var rs = stmt.executeQuery(sql);
             String columnLabel1 = "Location_of_inspection";
             String columnLabel2 = "Date_of_inspection";
             while(rs.next()){
-                roomDates.put(rs.getString(columnLabel1), rs.getString(columnLabel2));
-            }
+                roomDates.add(new String[] {rs.getString(columnLabel1), rs.getString(columnLabel2)});            }
 
         } catch (SQLException e) {
             System.err.println("Error retrieving data: " + e.getMessage());
